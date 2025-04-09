@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, date
 from uuid import UUID
 
 from dotenv import load_dotenv
@@ -16,7 +16,7 @@ class UsersTable(base.UUIDBase):
     email: Mapped[str]
     name: Mapped[str]
     last_name: Mapped[str]
-    birthday: Mapped[datetime]
+    birthday: Mapped[date]
 
     cars: Mapped[list['CarsTable']] = relationship('CarsTable', back_populates='user')
 
