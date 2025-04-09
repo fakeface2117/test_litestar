@@ -1,18 +1,28 @@
-from litestar import Controller, get, post, put, patch, delete
+from typing import Annotated
+
+from litestar import Controller, get, post, put, patch, delete, route, HttpMethod, Router
+from litestar.datastructures import ImmutableState
+from litestar.di import Provide
+from litestar.params import Parameter
 from pydantic import UUID4
 
-from app.api.v1.rest_models import User
+from app.api.v1.rest_models import User, UserCreate
+from app.services.users_service import get_users_service, UsersService
 
 
-class UserController(Controller):
+class UserController(Controller):  # Можно также объединять роуты в один Router, который потом регистрируется в Litestar
     path = "/users"
     tags = ["users"]
 
-    @post()
-    async def create_user(self, data: User) -> User: ...  # data это обязательный параметр для post
+    dependencies = {'user_service': Provide(get_users_service)}
+
+    @post()  # TODO сделать потом общий интерфейс
+    async def create_user(self, user_service: UsersService, data: UserCreate) -> User:  # data это обязательный параметр для post
+        return await user_service.create_user(data)
 
     @get()
-    async def list_users(self) -> list[User]: ...
+    async def list_users(self, state: ImmutableState) -> dict:  # Передача стейта. Можно с State
+        return state.dict()
 
     @patch(path="/{user_id:uuid}")
     async def partial_update_user(self, user_id: UUID4, data: User) -> User: ...
@@ -25,3 +35,21 @@ class UserController(Controller):
 
     @delete(path="/{user_id:uuid}")
     async def delete_user(self, user_id: UUID4) -> None: ...
+
+
+annotated_parameter = Annotated[int, Parameter(ge=1, le=10, description='Описание параметра', title='Some index')]
+
+
+class OtherController(Controller):
+    path = "/other"
+    tags = ["other"]
+
+    @route(path="/some-path", http_method=[HttpMethod.GET, HttpMethod.POST])
+    async def my_endpoint(self) -> None: ...
+
+    @route(path="/other-path/{index:int}", http_method=[HttpMethod.GET])
+    async def other_endpoint(self, index: annotated_parameter) -> dict[str, int]:
+        return {'my_index': index}
+
+
+base_router = Router(route_handlers=[UserController, OtherController], path="/base")
