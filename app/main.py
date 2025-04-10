@@ -13,14 +13,11 @@ from litestar.plugins.sqlalchemy import (
 from app.api.v1.users_controller import base_router
 from app.core.config import settings
 
-host = 'localhost'
-port = 8080
-
 
 @asynccontextmanager
 async def lifespan(_app: Litestar):
     print('Start app')
-    print(f'http://{host}:{port}/someapp/schema/swagger')
+    print(f'http://{settings.DB_HOST}:{settings.DB_PORT}/someapp/schema/swagger')
     _app.state.some_value1 = 'value1'  # передача параметра в стейт
     yield
     print('Stop app')
@@ -54,4 +51,4 @@ app = Litestar(
 )
 
 if __name__ == '__main__':
-    uvicorn.run(app, host=host, port=port)
+    uvicorn.run(app, host=settings.DB_HOST, port=settings.DB_PORT)
