@@ -1,14 +1,9 @@
 from datetime import date
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import EmailStr
 
-
-class BaseMappedModel(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True,
-        use_enum_values=True
-    )
+from app.api.v1.base_schema import BaseMappedModel
 
 
 class User(BaseMappedModel):
