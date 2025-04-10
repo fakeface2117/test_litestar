@@ -1,13 +1,9 @@
-import os
 from datetime import datetime, date
 from uuid import UUID
 
-from dotenv import load_dotenv
 from litestar.plugins.sqlalchemy import base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, relationship, mapped_column
-
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../.env'))
 
 
 class UsersTable(base.UUIDBase):
