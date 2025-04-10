@@ -1,13 +1,17 @@
-from litestar.plugins.sqlalchemy import repository
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.models import UsersTable
+from app.repositories.interface import BaseRepository
 
 
-class UsersRepository(repository.SQLAlchemyAsyncRepository[UsersTable]):
+class UsersRepository(BaseRepository[UsersTable]):
     """Класс репозиторий для пользователя"""
     model_type = UsersTable
 
+    def __init__(self, async_session: AsyncSession):
+        super().__init__(async_session)
+        self.async_session = async_session
 
-async def provide_users_repository(db_session: AsyncSession) -> UsersRepository:
-    return UsersRepository(session=db_session)
+
+def provide_users_repository(async_session: AsyncSession) -> UsersRepository:
+    return UsersRepository(async_session=async_session)
