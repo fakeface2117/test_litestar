@@ -14,10 +14,7 @@ class User(BaseMappedModel):
     birthday: date
 
 
-class UserCreate(BaseMappedModel):
-    email: EmailStr
-    name: str = Field(max_length=100)
-    last_name: str = Field(max_length=100)
+class UserValidatedSchema(BaseMappedModel):
     birthday: date
 
     @field_validator('birthday')
@@ -27,3 +24,20 @@ class UserCreate(BaseMappedModel):
         if date(year=value.year + 14, month=value.month, day=value.day) > datetime.now().date():
             raise ValueError('Вам должно быть 14 лет')
         return value
+
+
+class UserCreate(UserValidatedSchema):
+    email: EmailStr
+    name: str = Field(max_length=100)
+    last_name: str = Field(max_length=100)
+    birthday: date
+
+
+class UserUpdate(BaseMappedModel):
+    name: str | None = Field(max_length=100, default=None)
+    last_name: str | None = Field(max_length=100, default=None)
+    birthday: date | None = None
+
+
+class AllUsers(BaseMappedModel):
+    users: list[User]

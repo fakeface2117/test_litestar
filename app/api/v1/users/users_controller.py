@@ -1,12 +1,11 @@
 from typing import Annotated
 
-from litestar import Controller, get, post, put, patch, delete, route, HttpMethod, Router
-from litestar.datastructures import ImmutableState
+from litestar import Controller, get, post, patch, delete, route, HttpMethod
 from litestar.di import Provide
 from litestar.params import Parameter
 from pydantic import UUID4
 
-from app.api.v1.users.rest_models import User, UserCreate
+from app.api.v1.users.rest_models import User, UserCreate, AllUsers, UserUpdate
 from app.services.users_service import get_users_service, UsersService
 
 
@@ -21,20 +20,20 @@ class UserController(Controller):
         return await user_service.create_user(data)
 
     @get()
-    async def list_users(self, state: ImmutableState) -> dict:  # Передача стейта. Можно с State
-        return state.dict()
+    async def list_users(self, user_service: UsersService) -> AllUsers:
+        return await user_service.get_all_users()
 
     @patch(path="/{user_id:uuid}")
-    async def partial_update_user(self, user_id: UUID4, data: User) -> User: ...
-
-    @put(path="/{user_id:uuid}")
-    async def update_user(self, user_id: UUID4, data: User) -> User: ...
+    async def partial_update_user(self, user_id: UUID4, data: UserUpdate, user_service: UsersService) -> User:
+        return await user_service.update_user_by_id(user_id, data)
 
     @get(path="/{user_id:uuid}")
-    async def get_user(self, user_id: UUID4) -> User: ...
+    async def get_user(self, user_id: UUID4, user_service: UsersService) -> User:
+        return await user_service.get_user(user_id)
 
-    @delete(path="/{user_id:uuid}")
-    async def delete_user(self, user_id: UUID4) -> None: ...
+    @delete(path="/{user_id:uuid}", status_code=204)
+    async def delete_user(self, user_id: UUID4, user_service: UsersService) -> None:
+        return await user_service.delete_user(user_id)
 
 
 annotated_parameter = Annotated[int, Parameter(ge=1, le=10, description='Описание параметра', title='Some index')]
@@ -51,6 +50,3 @@ class OtherController(Controller):
     @route(path="/other-path/{index:int}", http_method=[HttpMethod.GET])
     async def other_endpoint(self, index: annotated_parameter) -> dict[str, int]:
         return {'my_index': index}
-
-
-
