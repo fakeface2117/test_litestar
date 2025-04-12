@@ -16,13 +16,13 @@ class User(BaseMappedModel):
 
 class UserCreate(BaseMappedModel):
     email: EmailStr
-    name: str
-    last_name: str
-    birthday: date = Field(ge=date.fromisoformat('2000'))
+    name: str = Field(max_length=100)
+    last_name: str = Field(max_length=100)
+    birthday: date
 
     @field_validator('birthday')
     def check_birth_date(cls, value):
-        if value >= datetime.now().date():
+        if value > datetime.now().date():
             raise ValueError('Не обманывайте, вы не из будущего')
         if date(year=value.year + 14, month=value.month, day=value.day) > datetime.now().date():
             raise ValueError('Вам должно быть 14 лет')
