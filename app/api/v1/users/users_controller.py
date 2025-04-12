@@ -15,11 +15,11 @@ class UserController(Controller):
 
     dependencies = {'user_service': Provide(get_users_service)}
 
-    @post()
+    @post('/')
     async def create_user(self, data: UserCreate, user_service: UsersService) -> User:
         return await user_service.create_user(data)
 
-    @get()
+    @get('/')
     async def list_users(self, user_service: UsersService) -> AllUsers:
         return await user_service.get_all_users()
 
