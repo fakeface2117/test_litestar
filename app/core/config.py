@@ -4,8 +4,14 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    SERVICE_NAME: str = 'Some app name'
+    SERVICE_BASE_URL: str = '/someapp'
     SERVICE_LOCAL_HOST: str = 'localhost'
     SERVICE_LOCAL_PORT: int = 8080
+
+    @property
+    def SERVICE_SWAGGER_URL(self):
+        return f'http://{self.SERVICE_LOCAL_HOST}:{settings.SERVICE_LOCAL_PORT}{self.SERVICE_BASE_URL}/schema/swagger'
 
     DRIVER: str = "postgresql+asyncpg"
 
