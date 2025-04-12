@@ -13,12 +13,12 @@ model_table = TypeVar('model_table', bound=Base)
 class BaseRepository(Generic[model_table]):
     """Базовый класс репозиторий"""
 
-    ModelT = type[model_table]
+    ModelT: type[model_table]
 
     def __init__(self, async_session: AsyncSession):
         self.async_session = async_session
 
-    async def add(self, values: dict) -> ModelT:
+    async def add(self, values: dict):
         new_object = self.ModelT(**values)
         self.async_session.add(new_object)
         try:
