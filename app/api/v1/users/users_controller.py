@@ -6,18 +6,18 @@ from litestar.di import Provide
 from litestar.params import Parameter
 from pydantic import UUID4
 
-from app.api.v1.rest_models import User, UserCreate
+from app.api.v1.users.rest_models import User, UserCreate
 from app.services.users_service import get_users_service, UsersService
 
 
-class UserController(Controller):  # Можно также объединять роуты в один Router, который потом регистрируется в Litestar
+class UserController(Controller):
     path = "/users"
     tags = ["users"]
 
     dependencies = {'user_service': Provide(get_users_service)}
 
-    @post()  # TODO сделать потом общий интерфейс
-    async def create_user(self, user_service: UsersService, data: UserCreate) -> User:  # data это обязательный параметр для post
+    @post()
+    async def create_user(self, data: UserCreate, user_service: UsersService) -> User:
         return await user_service.create_user(data)
 
     @get()
@@ -41,6 +41,7 @@ annotated_parameter = Annotated[int, Parameter(ge=1, le=10, description='Опи�
 
 
 class OtherController(Controller):
+    # просто потестить
     path = "/other"
     tags = ["other"]
 
@@ -52,4 +53,4 @@ class OtherController(Controller):
         return {'my_index': index}
 
 
-base_router = Router(route_handlers=[UserController, OtherController], path="/base")
+

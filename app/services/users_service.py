@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.rest_models import UserCreate, User
+from app.api.v1.users.rest_models import UserCreate, User
 from app.repositories.interface import BaseRepository
 from app.repositories.users_repository import provide_users_repository
 

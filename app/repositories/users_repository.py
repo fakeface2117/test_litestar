@@ -6,7 +6,7 @@ from app.repositories.interface import BaseRepository
 
 class UsersRepository(BaseRepository[UsersTable]):
     """Класс репозиторий для пользователя"""
-    model_type = UsersTable
+    ModelT = UsersTable
 
     def __init__(self, async_session: AsyncSession):
         super().__init__(async_session)
