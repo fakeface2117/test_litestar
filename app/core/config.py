@@ -4,6 +4,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    MODE: str = os.getenv('MODE')
+
     SERVICE_NAME: str = 'Some app name'
     SERVICE_BASE_URL: str = '/someapp'
     SERVICE_LOCAL_HOST: str = 'localhost'
