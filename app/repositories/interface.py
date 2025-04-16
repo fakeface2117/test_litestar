@@ -12,7 +12,7 @@ model_table = TypeVar('model_table', bound=Base)
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def add(self):
+    async def add(self, values: dict):
         raise NotImplementedError
 
     @abstractmethod
@@ -20,7 +20,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
 
-class BaseRepository(Generic[model_table]):
+class BaseRepository(AbstractRepository, Generic[model_table]):
     """Базовый класс репозиторий"""
 
     ModelT: type[model_table]
