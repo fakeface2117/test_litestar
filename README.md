@@ -2,6 +2,7 @@
 - litestar
 - sqlalchemy
 - custom exceptions
+- controllers
 - pattern repository
 - pattern unit of work
 - domain
