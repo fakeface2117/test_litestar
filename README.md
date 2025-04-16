@@ -7,3 +7,4 @@
 - pattern unit of work
 - domain
 - interfaces
+- no authorization
