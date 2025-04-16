@@ -25,8 +25,8 @@ class UsersService:
 
     async def get_all_users(self, uow: AbstractUnitOfWork,) -> AllUsers:
         async with uow:
-            users = await uow.users.get_all()
-        return AllUsers(users=[User.model_validate(user) for user in users])
+            all_users = await uow.users.get_all()
+            return AllUsers(users=[User.model_validate(user) for user in all_users])
 
     async def update_user_by_id(self, uow: AbstractUnitOfWork, user_id: UUID, user: UserUpdate) -> User:
         async with uow:
@@ -38,6 +38,7 @@ class UsersService:
         async with uow:
             delete_result = await uow.users.delete_one_by_id(user_id)
             if not delete_result:
+                logger.warning(f'User with id {user_id} not found in database')
                 raise UserNotFoundException(user_id)
             await uow.commit()
 

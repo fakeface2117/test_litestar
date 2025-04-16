@@ -33,12 +33,12 @@ class UnitOfWork(AbstractUnitOfWork):
         self.session = self.session_factory()
         self.users = UsersRepository(self.session)
 
-    async def __aexit__(self, *args):
-        await self.rollback()
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        if exc_type:
+            await self.rollback()
         await self.session.close()
 
     async def commit(self):
-        await asyncio.sleep(30)
         await self.session.commit()
 
     async def rollback(self):
