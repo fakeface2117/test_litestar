@@ -1,5 +1,4 @@
 import abc
-import asyncio
 
 from app.database.connection import async_session_maker
 from app.repositories.users_repository import UsersRepository
