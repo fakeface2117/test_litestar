@@ -11,7 +11,3 @@ class UsersRepository(BaseRepository[UsersTable]):
     def __init__(self, async_session: AsyncSession):
         super().__init__(async_session)
         self.async_session = async_session
-
-
-def provide_users_repository(async_session: AsyncSession) -> UsersRepository:
-    return UsersRepository(async_session=async_session)
