@@ -1,11 +1,13 @@
 import abc
 
 from app.database.connection import async_session_maker
+from app.repositories.cars_repository import CarsRepository
 from app.repositories.users_repository import UsersRepository
 
 
 class AbstractUnitOfWork(abc.ABC):
     users: UsersRepository
+    cars: CarsRepository
 
     @abc.abstractmethod
     async def __aenter__(self):
@@ -31,6 +33,7 @@ class UnitOfWork(AbstractUnitOfWork):
     async def __aenter__(self):
         self.session = self.session_factory()
         self.users = UsersRepository(self.session)
+        self.cars = CarsRepository(self.session)
 
     async def __aexit__(self, exc_type, exc_value, traceback):
         if exc_type:
