@@ -43,6 +43,11 @@ class BaseRepository(AbstractRepository, Generic[model_table]):
         result = await self.async_session.execute(query)
         return result.scalars().first()
 
+    async def get_by_filters(self, filters):
+        query = select(self.ModelT).filter_by(**filters)
+        result = await self.async_session.execute(query)
+        return result.scalars().all()
+
     async def update_by_id(self, id_: UUID | int, values: dict):
         query = update(self.ModelT).where(self.ModelT.id == id_).values(**values).returning(self.ModelT)
         result = await self.async_session.execute(query)
@@ -52,5 +57,12 @@ class BaseRepository(AbstractRepository, Generic[model_table]):
         data = await self.get_by_id(id_)
         if data:
             await self.async_session.delete(data)
+            return True
+        return False
+
+    async def delete_by_filters(self, filters: dict):
+        data = await self.get_by_filters(filters)
+        if data:
+            await self.async_session.delete(data[0])
             return True
         return False
